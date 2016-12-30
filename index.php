@@ -54,14 +54,14 @@ $OUTPUT->welcomeUserCourse();
 
 // We could use the settings form - but we will keep this simple
 echo('<form method="post">');
-echo(_("Enter code:")."\n");
+echo(__("Enter code:")."\n");
 if ( $USER->instructor ) {
     echo('<input type="text" name="code" value="'.htmlent_utf8($old_code).'"> ');
-    echo('<input type="submit" class="btn btn-normal" name="set" value="'._('Update code').'"> ');
-    echo('<input type="submit" class="btn btn-warning" name="clear" value="'._('Clear data').'"><br/>');
+    echo('<input type="submit" class="btn btn-normal" name="set" value="'.__('Update code').'"> ');
+    echo('<input type="submit" class="btn btn-warning" name="clear" value="'.__('Clear data').'"><br/>');
 } else {
     echo('<input type="text" name="code" value=""> ');
-    echo('<input type="submit" class="btn btn-normal" name="set" value="'._('Record attendance').'"><br/>');
+    echo('<input type="submit" class="btn btn-normal" name="set" value="'.__('Record attendance').'"><br/>');
 }
 echo("\n</form>\n");
 
@@ -71,7 +71,7 @@ if ( $USER->instructor ) {
             array(':LI' => $LINK->id)
     );
     echo('<table border="1">'."\n");
-    echo("<tr><th>"._("User")."</th><th>"._("Attendance")."</th><th>"._("IP Address")."</th></tr>\n");
+    echo("<tr><th>".__("User")."</th><th>".__("Attendance")."</th><th>".__("IP Address")."</th></tr>\n");
     foreach ( $rows as $row ) {
         echo "<tr><td>";
         echo($row['user_id']);
