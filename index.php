@@ -36,7 +36,7 @@ if ( isset($_POST['code']) && isset($_POST['set']) && $USER->instructor ) {
             array(
                 ':LI' => $LINK->id,
                 ':UI' => $USER->id,
-                ':IP' => Net::get_ip()
+                ':IP' => Net::getIP()
             )
         );
         $_SESSION['success'] = __('Attendance Recorded...');
