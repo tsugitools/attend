@@ -6,6 +6,7 @@ require_once "../config.php";
 
 use \Tsugi\Core\Settings;
 use \Tsugi\Core\LTIX;
+use \Tsugi\Util\Net;
 
 // No parameter means we require CONTEXT, USER, and LINK
 $LAUNCH = LTIX::requireData(); 
@@ -35,7 +36,7 @@ if ( isset($_POST['code']) && isset($_POST['set']) && $USER->instructor ) {
             array(
                 ':LI' => $LINK->id,
                 ':UI' => $USER->id,
-                ':IP' => $_SERVER["REMOTE_ADDR"]
+                ':IP' => Net::get_ip()
             )
         );
         $_SESSION['success'] = __('Attendance Recorded...');
