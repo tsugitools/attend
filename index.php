@@ -53,6 +53,7 @@ $OUTPUT->bodyStart();
 $OUTPUT->flashMessages();
 $OUTPUT->welcomeUserCourse();
 
+echo("<!-- Rendered using old school MVC index.php -->\n");
 // We could use the settings form - but we will keep this simple
 echo('<form method="post">');
 echo(__("Enter code:")."\n");
