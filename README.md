@@ -30,6 +30,7 @@ Silex Version
 -------------
 
 The `.htaccess` file moves all requests into `silex.php`.  
-The template is stored in `templates/Cookies.twig`.
+The `silex.php` file uses the class in `src/AppBundle/Attend.php` as the controller.
+The template is stored in `templates/Attend.twig`.
 
 
