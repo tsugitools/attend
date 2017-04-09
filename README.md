@@ -16,7 +16,7 @@ If you want to run the Silex version copy the `.htaccess` file
 You can check which version is running by looking for a comment
 like: 
 
-    <!-- Rendered from Cookie.twig -->
+    <!-- Rendered from Attend.twig -->
     <!-- Rendered using old school MVC index.php -->
 
 Both versions do the same thing.
@@ -29,9 +29,7 @@ All the model, view, and controller are stored in `index.php`
 Silex Version
 -------------
 
-The `.htaccess` file moves all requests into `silex.php`.  This
-file routes GET and POST requests into a controller stored in
-`src/AppBundle/Cookies.php`.  The template is stored in 
-`templates/Cookies.twig`.
+The `.htaccess` file moves all requests into `silex.php`.  
+The template is stored in `templates/Cookies.twig`.
 
 
