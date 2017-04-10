@@ -7,20 +7,20 @@
 </p>
 <p>
 <form method="post">
-Enter code:
+{{ __('Enter code:') }}
 {% if app.tsugi.user.instructor %}
     <input type="text" name="code" value="{{ old_code }}">
-    <input type="submit" class="btn btn-normal" name="set" value="Update code">
-    <input type="submit" class="btn btn-warning" name="clear" value="Clear data"><br/>
+    <input type="submit" class="btn btn-normal" name="set" value="{{ __('Update code') }}">
+    <input type="submit" class="btn btn-warning" name="clear" value="{{ __('Clear data') }}"><br/>
 {% else %} 
     <input type="text" name="code" value="">
-    <input type="submit" class="btn btn-normal" name="set" value="Record attendance">
+    <input type="submit" class="btn btn-normal" name="set" value="{{ __('Record attendance') }}">
 {% endif %}
 </form>
 
 {% if app.tsugi.user.instructor %}
     <table border="1">
-    <tr><th>User</th><th>Attendance</th><th>IP Address</th></tr>
+    <tr><th>{{ __('User') }}</th><th>{{ __('Attendance') }}</th><th>{{ __('IP Address') }}</th></tr>
     {% for row in rows %}
         <tr><td>{{row.user_id}}</td><td>{{ row.attend }}</td><td>{{ row.ipaddr }}</td></tr>
     {% endfor %}
