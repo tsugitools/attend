@@ -57,6 +57,6 @@ class Attend {
                 $app->tsugiFlashSuccess(__('Code incorrect'));
             }
         }
-        return $app->tsugiRedirect('main');
+        return $app->tsugiReroute('main');
     }
 }
