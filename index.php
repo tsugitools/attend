@@ -53,6 +53,8 @@ $OUTPUT->bodyStart();
 $OUTPUT->flashMessages();
 $OUTPUT->welcomeUserCourse();
 
+echo("<!-- Classic single-file version of the tool -->\n");
+
 // We could use the settings form - but we will keep this simple
 echo('<form method="post">');
 echo(__("Enter code:")."\n");
