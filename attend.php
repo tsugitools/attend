@@ -9,18 +9,13 @@ use \Tsugi\Util\Net;
 $LAUNCH = LTIX::requireData(); 
 
 if (!isset($_POST['code'])) {
-  header('HTTP/1.1 400 entries parameter not set');
-  echo '<h1>Form submission invalid<h1>';
-  echo '<p>Please submit an `code` post parameter</p>';
-  exit();
+    $OUTPUT->jsonError('Missing code parameter');
+    return;
 }
 
-// Model
-$p = $CFG->dbprefix;
 $old_code = Settings::linkGet('code', '');
-
 if ( $old_code == $_POST['code'] ) {
-    $PDOX->queryDie("INSERT INTO {$p}attend
+    $PDOX->queryDie("INSERT INTO {$CFG->dbprefix}attend
         (link_id, user_id, ipaddr, attend, updated_at)
         VALUES ( :LI, :UI, :IP, NOW(), NOW() )
         ON DUPLICATE KEY UPDATE updated_at = NOW()",

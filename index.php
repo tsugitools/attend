@@ -44,17 +44,14 @@ function doAjax(script, post) {
             dataType: 'text',
             data: post
         }).done(function(res) {
-            if (res === "{status: 1}") {
-                notify('success', 'Your selection was saved.');
-            } else {
-                notify('danger', '<strong>Error</strong> saving the selection failed.');
-            }
+            notify('success', 'Your selection was saved.');
         }).fail(function(err) {
-            notify('danger', '<strong>Error</strong> saving the selection failed.');
+            notify('danger', '<strong>Error</strong> server call failed.');
         }).always(function() {
         });
 }
 </script>
+
 <script type="text/x-tmpl" id="tmpl-notify">
     <div class="alert alert-{%=o.type%}">{%#o.msg%}</div>
 </script>
@@ -63,24 +60,24 @@ function doAjax(script, post) {
 if ( $USER->instructor ) {
 ?>
 <script type="text/x-tmpl" id="instructor-form">
-Enter code:
-<input type="text" value="<?= $old_code ?>" id="instructor-code">
-<input type="submit" class="btn btn-normal" id="instructor-submit"
-    value="Update Code">
-<input type="submit" class="btn btn-warning" id="instructor-clear"
-    value="Clear data"><br/>
-</form>
+    Enter code:
+    <input type="text" value="<?= $old_code ?>" id="instructor-code">
+    <input type="submit" class="btn btn-normal" id="instructor-submit"
+        value="Update Code">
+    <input type="submit" class="btn btn-warning" id="instructor-clear"
+        value="Clear data"><br/>
+    </form>
 </script>
 
 <script type="text/x-tmpl" id="instructor-table">
-{% if (o.length > 0 ) { %}
-    <table border="1">
-    <tr><th>User</th><th>Attendance</th><th>IP Address</th></tr>
-    {% for (var i=0; i<o.length; i++) { var row = o[i]; %}
-        <tr><td>{%= row.user_id %}</td><td>{%= row.attend %}</td><td>{%= row.ipaddr %}</td></tr>
+    {% if (o.length > 0 ) { %}
+        <table border="1">
+        <tr><th>User</th><th>Attendance</th><th>IP Address</th></tr>
+        {% for (var i=0; i<o.length; i++) { var row = o[i]; %}
+            <tr><td>{%= row.user_id %}</td><td>{%= row.attend %}</td><td>{%= row.ipaddr %}</td></tr>
+        {% } %}
+        </table>
     {% } %}
-    </table>
-{% } %}
 </script>
 
 <script>
@@ -97,25 +94,26 @@ $(document).ready(function(){
         notify();
         doAjax('<?= addSession('clear.php') ?>', {});
     });
-});
 
-$(document).ready(function(){
     $.getJSON('<?= addSession('getrows.php') ?>', function(rows) {
         window.console && console.log(rows);
         document.getElementById("table").innerHTML = tmpl("instructor-table", rows);
-    }).fail( function() { alert('getJSON fail'); } );
+    }).fail( function() {
+        notify('danger', 'Unable to load attendance data'); 
+    });
 });
 
 </script>
 <?php
-} else {
+
+} else { // Student view
 ?>
 <script type="text/x-tmpl" id="student-form">
-Enter code:
-<input type="text" name="code" value="" id="student-code">
-<input type="submit" class="btn btn-normal" id="student-submit"
-    value="Record attendance"><br/>
-</form>
+    Enter code:
+    <input type="text" name="code" value="" id="student-code">
+    <input type="submit" class="btn btn-normal" id="student-submit"
+        value="Record attendance"><br/>
+    </form>
 </script>
 
 <script>
@@ -130,6 +128,7 @@ $(document).ready(function(){
 });
 </script>
 <?php
-}
+} // End Student view
+
 $OUTPUT->footerEnd();
 

@@ -9,16 +9,13 @@ use \Tsugi\Util\Net;
 $LAUNCH = LTIX::requireData(); 
 
 if ( ! $USER->instructor ) {
-  header('HTTP/1.1 403 Must be instructor');
-  echo '<h1>Must be instructor<h1>';
-  exit();
+    $OUTPUT->jsonAuthError('Must be instructor');
+    return;
 }
 
-if (!isset($_POST['code'])) {
-  header('HTTP/1.1 400 entries parameter not set');
-  echo '<h1>Form submission invalid<h1>';
-  echo '<p>Please submit an `code` post parameter</p>';
-  exit();
+if ( ! isset($_POST['code'])) {
+    $OUTPUT->jsonError('Missing code parameter');
+    return;
 }
 
 Settings::linkSet('code', $_POST['code']);
