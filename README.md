@@ -6,9 +6,20 @@ This is a sample Tsugi application with several variations:
 
 * Simple single-file application (master branch)
 * Silex application (silex branch)
+* Single file application that uses a handlebars templated rendered in the browser
 
-Useful command:
+These are permanent branches - to update a version, do it all in that branch.
 
-    git checkout --track -b origin/silex
+To use handlebars version
+-------------------------
+
+    git checkout handlebars
+
+To update handlebars version
+----------------------------
+
+    git status   (Make sure you are on the handlebars branch)
+    git commit -a
+    git push origin handlebars
 
 
