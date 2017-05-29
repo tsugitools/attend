@@ -1,14 +1,9 @@
 
-Sample Code - Multiple Styles
------------------------------
+Sample Code - Handlebars
+------------------------
 
-This is a sample Tsugi application with several variations:
-
-* Simple single-file application (master branch)
-* Silex application (silex branch)
-
-Useful command:
-
-    git checkout --track -b origin/silex
+This application uses a traditional single-file controller with a 
+browser-rendered Handlebars template that has been localized 
+using `__()` (i.e. gettext)
 
 

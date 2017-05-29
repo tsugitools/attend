@@ -53,40 +53,33 @@ $OUTPUT->bodyStart();
 $OUTPUT->flashMessages();
 $OUTPUT->welcomeUserCourse();
 
-echo("<!-- Classic single-file version of the tool -->\n");
+echo("<!-- Handlebars version of the tool -->\n");
+echo('<div id="attend-div"><img src="'.$OUTPUT->getSpinnerUrl().'"></div>'."\n");
 
-// We could use the settings form - but we will keep this simple
-echo('<form method="post">');
-echo(__("Enter code:")."\n");
-if ( $USER->instructor ) {
-    echo('<input type="text" name="code" value="'.htmlent_utf8($old_code).'"> ');
-    echo('<input type="submit" class="btn btn-normal" name="set" value="'.__('Update code').'"> ');
-    echo('<input type="submit" class="btn btn-warning" name="clear" value="'.__('Clear data').'"><br/>');
-} else {
-    echo('<input type="text" name="code" value=""> ');
-    echo('<input type="submit" class="btn btn-normal" name="set" value="'.__('Record attendance').'"><br/>');
-}
-echo("\n</form>\n");
+$OUTPUT->footerStart();
+$OUTPUT->templateInclude(array('attend'));
 
 if ( $USER->instructor ) {
-    $rows = $PDOX->allRowsDie("SELECT user_id,attend,ipaddr FROM {$p}attend
-            WHERE link_id = :LI ORDER BY attend DESC, user_id",
-            array(':LI' => $LINK->id)
-    );
-    echo('<table border="1">'."\n");
-    echo("<tr><th>".__("User")."</th><th>".__("Attendance")."</th><th>".__("IP Address")."</th></tr>\n");
-    foreach ( $rows as $row ) {
-        echo "<tr><td>";
-        echo($row['user_id']);
-        echo("</td><td>");
-        echo($row['attend']);
-        echo("</td><td>");
-        echo(htmlent_utf8($row['ipaddr']));
-        echo("</td></tr>\n");
-    }
-    echo("</table>\n");
-}
-
-$OUTPUT->footer();
-
+?>
+<script>
+$(document).ready(function(){
+    $.getJSON('<?= addSession('getrows.php') ?>', function(rows) {
+        window.console && console.log(rows);
+        context = { 'rows' : rows,
+            'instructor' : true,
+            'old_code' : '<?= $old_code ?>'
+        };
+        tsugiHandlebarsToDiv('attend-div', 'attend', context);
+    }).fail( function() { alert('getJSON fail'); } );
+});
+</script>
+<?php } else { ?>
+<script>
+$(document).ready(function(){
+    tsugiHandlebarsToDiv('attend-div', 'attend', {});
+});
+</script>
+<?php
+} // End $USER->instructor
+$OUTPUT->footerEnd();
 
