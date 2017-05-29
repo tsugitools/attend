@@ -37,6 +37,7 @@ function notify(type, msg) {
         $('#option-notification').html(tmpl('tmpl-notify', {type: type, msg: msg}));
     }
 }
+
 function doAjax(script, post) {
         $.ajax({
             url: script,
@@ -117,7 +118,6 @@ $(document).ready(function(){
 </script>
 
 <script>
-
 $(document).ready(function(){
     document.getElementById("result").innerHTML = tmpl("student-form", {});
 
