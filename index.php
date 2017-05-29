@@ -11,41 +11,7 @@ use \Tsugi\Util\Net;
 // No parameter means we require CONTEXT, USER, and LINK
 $LAUNCH = LTIX::requireData(); 
 
-// Model
-$p = $CFG->dbprefix;
 $old_code = Settings::linkGet('code', '');
-
-if ( isset($_POST['code']) && isset($_POST['set']) && $USER->instructor ) {
-    Settings::linkSet('code', $_POST['code']);
-    $_SESSION['success'] = 'Code updated';
-    header( 'Location: '.addSession('index.php') ) ;
-    return;
-} else if ( isset($_POST['clear']) && $USER->instructor ) {
-    $rows = $PDOX->queryDie("DELETE FROM {$p}attend WHERE link_id = :LI",
-            array(':LI' => $LINK->id)
-    );
-    $_SESSION['success'] = 'Data cleared';
-    header( 'Location: '.addSession('index.php') ) ;
-    return;
-} else if ( isset($_POST['code']) ) { // Student
-    if ( $old_code == $_POST['code'] ) {
-        $PDOX->queryDie("INSERT INTO {$p}attend
-            (link_id, user_id, ipaddr, attend, updated_at)
-            VALUES ( :LI, :UI, :IP, NOW(), NOW() )
-            ON DUPLICATE KEY UPDATE updated_at = NOW()",
-            array(
-                ':LI' => $LINK->id,
-                ':UI' => $USER->id,
-                ':IP' => Net::getIP()
-            )
-        );
-        $_SESSION['success'] = __('Attendance Recorded...');
-    } else {
-        $_SESSION['error'] = __('Code incorrect');
-    }
-    header( 'Location: '.addSession('index.php') ) ;
-    return;
-}
 
 // View
 $OUTPUT->header();
@@ -53,33 +19,117 @@ $OUTPUT->bodyStart();
 $OUTPUT->flashMessages();
 $OUTPUT->welcomeUserCourse();
 
-echo("<!-- Handlebars version of the tool -->\n");
-echo('<div id="attend-div"><img src="'.$OUTPUT->getSpinnerUrl().'"></div>'."\n");
+echo("<!-- tmpljs version of the tool -->\n");
+echo('<div id="application">'."\n");
+echo('<div id="option-notification"></div>'."\n");
+echo('<div id="result"><img src="'.$OUTPUT->getSpinnerUrl().'"></div>'."\n");
+echo('<div id="table"></div>'."\n");
+echo("</div>\n");
 
 $OUTPUT->footerStart();
-$OUTPUT->templateInclude(array('attend'));
 
-if ( $USER->instructor ) {
 ?>
 <script>
+function notify(type, msg) {
+    if (type == undefined) {
+        $('#option-notification').html('');
+    } else {
+        $('#option-notification').html(tmpl('tmpl-notify', {type: type, msg: msg}));
+    }
+}
+function doAjax(script, post) {
+        $.ajax({
+            url: script,
+            type: 'POST',
+            dataType: 'text',
+            data: post
+        }).done(function(res) {
+            if (res === "{status: 1}") {
+                notify('success', 'Your selection was saved.');
+            } else {
+                notify('danger', '<strong>Error</strong> saving the selection failed.');
+            }
+        }).fail(function(err) {
+            notify('danger', '<strong>Error</strong> saving the selection failed.');
+        }).always(function() {
+        });
+}
+</script>
+<script type="text/x-tmpl" id="tmpl-notify">
+    <div class="alert alert-{%=o.type%}">{%#o.msg%}</div>
+</script>
+
+<?php
+if ( $USER->instructor ) {
+?>
+<script type="text/x-tmpl" id="instructor-form">
+Enter code:
+<input type="text" value="<?= $old_code ?>" id="instructor-code">
+<input type="submit" class="btn btn-normal" id="instructor-submit"
+    value="Update Code">
+<input type="submit" class="btn btn-warning" id="instructor-clear"
+    value="Clear data"><br/>
+</form>
+</script>
+
+<script type="text/x-tmpl" id="instructor-table">
+{% if (o.length > 0 ) { %}
+    <table border="1">
+    <tr><th>User</th><th>Attendance</th><th>IP Address</th></tr>
+    {% for (var i=0; i<o.length; i++) { var row = o[i]; %}
+        <tr><td>{%= row.user_id %}</td><td>{%= row.attend %}</td><td>{%= row.ipaddr %}</td></tr>
+    {% } %}
+    </table>
+{% } %}
+</script>
+
+<script>
+
+$(document).ready(function(){
+    document.getElementById("result").innerHTML = tmpl("instructor-form", {});
+
+    $('#instructor-submit').on('click', function(event) {
+        event.preventDefault();
+        doAjax('<?= addSession('newcode.php') ?>', {code: $('#instructor-code').val()});
+    });
+    $('#instructor-clear').on('click', function(event) {
+        event.preventDefault();
+        notify();
+        doAjax('<?= addSession('clear.php') ?>', {});
+    });
+});
+
 $(document).ready(function(){
     $.getJSON('<?= addSession('getrows.php') ?>', function(rows) {
         window.console && console.log(rows);
-        context = { 'rows' : rows,
-            'instructor' : true,
-            'old_code' : '<?= $old_code ?>'
-        };
-        tsugiHandlebarsToDiv('attend-div', 'attend', context);
+        document.getElementById("table").innerHTML = tmpl("instructor-table", rows);
     }).fail( function() { alert('getJSON fail'); } );
 });
+
 </script>
-<?php } else { ?>
+<?php
+} else {
+?>
+<script type="text/x-tmpl" id="student-form">
+Enter code:
+<input type="text" name="code" value="" id="student-code">
+<input type="submit" class="btn btn-normal" id="student-submit"
+    value="Record attendance"><br/>
+</form>
+</script>
+
 <script>
+
 $(document).ready(function(){
-    tsugiHandlebarsToDiv('attend-div', 'attend', {});
+    document.getElementById("result").innerHTML = tmpl("student-form", {});
+
+    $('#student-submit').on('click', function(event) {
+        event.preventDefault();
+        doAjax('<?= addSession('attend.php') ?>', {code: $('#student-code').val()});
+    });
 });
 </script>
 <?php
-} // End $USER->instructor
+}
 $OUTPUT->footerEnd();
 
