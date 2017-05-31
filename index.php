@@ -9,15 +9,16 @@ use \Tsugi\Core\LTIX;
 use \Tsugi\Util\Net;
 
 // No parameter means we require CONTEXT, USER, and LINK
-$LAUNCH = LTIX::requireData(); 
+$LAUNCH = LTIX::requireData();
 
 $old_code = Settings::linkGet('code', '');
 
 // View
 $OUTPUT->header();
 $OUTPUT->bodyStart();
-$OUTPUT->flashMessages();
+$OUTPUT->topNav();
 $OUTPUT->welcomeUserCourse();
+$OUTPUT->flashMessages();
 
 echo("<!-- tmpljs version of the tool -->\n");
 echo('<div id="application">'."\n");
@@ -30,24 +31,29 @@ $OUTPUT->footerStart();
 
 ?>
 <script>
-function notify(type, msg) {
+function notify(type, msg, err) {
     if (type == undefined) {
         $('#option-notification').html('');
     } else {
+        if  ( typeof err != 'undefined' &&
+              typeof err.statusText == 'string') msg = err.statusText;
         $('#option-notification').html(tmpl('tmpl-notify', {type: type, msg: msg}));
     }
 }
 
-function doAjax(script, post) {
+function doAjax(script, post, success, fail) {
+        notify();
         $.ajax({
             url: script,
             type: 'POST',
             dataType: 'text',
             data: post
         }).done(function(res) {
-            notify('success', 'Your selection was saved.');
+            if (typeof success === "function") success(res);
+            else notify('success', 'Request success.');
         }).fail(function(err) {
-            notify('danger', '<strong>Error</strong> server call failed.');
+            if (typeof fail === "function") fail(err);
+            else notify('danger', '<strong>Error</strong> server request failed.', err);
         }).always(function() {
         });
 }
@@ -65,6 +71,8 @@ if ( $USER->instructor ) {
     <input type="text" value="<?= $old_code ?>" id="instructor-code">
     <input type="submit" class="btn btn-normal" id="instructor-submit"
         value="Update Code">
+    <input type="submit" class="btn btn-normal" id="instructor-reload"
+            value="Reload Data">
     <input type="submit" class="btn btn-warning" id="instructor-clear"
         value="Clear data"><br/>
     </form>
@@ -83,25 +91,38 @@ if ( $USER->instructor ) {
 
 <script>
 
+function getRows(silent) {
+    $.getJSON('<?= addSession('getrows.php') ?>', function(rows) {
+        window.console && console.log(rows);
+        document.getElementById("table").innerHTML = tmpl("instructor-table", rows);
+        if ( ! (silent === true) ) notify('success', 'Request success.');
+    }).fail( function() {
+        notify('danger', 'Unable to load attendance data');
+    });
+}
+
 $(document).ready(function(){
     document.getElementById("result").innerHTML = tmpl("instructor-form", {});
 
     $('#instructor-submit').on('click', function(event) {
         event.preventDefault();
-        doAjax('<?= addSession('newcode.php') ?>', {code: $('#instructor-code').val()});
+        doAjax('<?= addSession('newcode.php') ?>',
+            {code: $('#instructor-code').val()}, getRows
+        );
     });
     $('#instructor-clear').on('click', function(event) {
         event.preventDefault();
-        notify();
-        doAjax('<?= addSession('clear.php') ?>', {});
+        doAjax('<?= addSession('clear.php') ?>', {}, getRows);
     });
 
-    $.getJSON('<?= addSession('getrows.php') ?>', function(rows) {
-        window.console && console.log(rows);
-        document.getElementById("table").innerHTML = tmpl("instructor-table", rows);
-    }).fail( function() {
-        notify('danger', 'Unable to load attendance data'); 
+    $('#instructor-reload').on('click', function(event) {
+        event.preventDefault();
+        notify();
+        getRows(true);
     });
+
+    // Initial load of the rows
+    getRows(true);
 });
 
 </script>
@@ -131,4 +152,3 @@ $(document).ready(function(){
 } // End Student view
 
 $OUTPUT->footerEnd();
-

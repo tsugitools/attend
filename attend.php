@@ -6,7 +6,7 @@ use \Tsugi\Core\LTIX;
 use \Tsugi\Util\Net;
 
 // No parameter means we require CONTEXT, USER, and LINK
-$LAUNCH = LTIX::requireData(); 
+$LAUNCH = LTIX::requireData();
 
 if (!isset($_POST['code'])) {
     $OUTPUT->jsonError('Missing code parameter');
@@ -27,5 +27,5 @@ if ( $old_code == $_POST['code'] ) {
     );
     $OUTPUT->jsonOutput(array('success'=>1, 'detail'=>'Attendance recorded'));
 } else {
-    $OUTPUT->jsonError(array('success'=>0, 'detail'=>'Code incorrect'));
+    $OUTPUT->jsonError('Code incorrect');
 }
