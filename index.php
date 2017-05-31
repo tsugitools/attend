@@ -9,7 +9,7 @@ use \Tsugi\Core\LTIX;
 use \Tsugi\Util\Net;
 
 // No parameter means we require CONTEXT, USER, and LINK
-$LAUNCH = LTIX::requireData(); 
+$LAUNCH = LTIX::requireData();
 
 // Handle Post Data
 $p = $CFG->dbprefix;
@@ -60,8 +60,9 @@ if ( $USER->instructor ) {
 // Render view
 $OUTPUT->header();
 $OUTPUT->bodyStart();
-$OUTPUT->flashMessages();
+$OUTPUT->topNav();
 $OUTPUT->welcomeUserCourse();
+$OUTPUT->flashMessages();
 
 echo("<!-- Classic single-file version of the tool -->\n");
 
@@ -94,5 +95,3 @@ if ( $rows ) {
 }
 
 $OUTPUT->footer();
-
-
