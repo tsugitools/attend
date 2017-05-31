@@ -11,7 +11,7 @@ use \Tsugi\Util\Net;
 // No parameter means we require CONTEXT, USER, and LINK
 $LAUNCH = LTIX::requireData(); 
 
-// Model
+// Handle Post Data
 $p = $CFG->dbprefix;
 $old_code = Settings::linkGet('code', '');
 
@@ -47,7 +47,17 @@ if ( isset($_POST['code']) && isset($_POST['set']) && $USER->instructor ) {
     return;
 }
 
-// View
+// Prepare for view
+if ( $USER->instructor ) {
+    $rows = $PDOX->allRowsDie("SELECT user_id,attend,ipaddr FROM {$p}attend
+            WHERE link_id = :LI ORDER BY attend DESC, user_id",
+            array(':LI' => $LINK->id)
+    );
+} else {
+    $rows = false;
+}
+
+// Render view
 $OUTPUT->header();
 $OUTPUT->bodyStart();
 $OUTPUT->flashMessages();
@@ -68,11 +78,7 @@ if ( $USER->instructor ) {
 }
 echo("\n</form>\n");
 
-if ( $USER->instructor ) {
-    $rows = $PDOX->allRowsDie("SELECT user_id,attend,ipaddr FROM {$p}attend
-            WHERE link_id = :LI ORDER BY attend DESC, user_id",
-            array(':LI' => $LINK->id)
-    );
+if ( $rows ) {
     echo('<table border="1">'."\n");
     echo("<tr><th>".__("User")."</th><th>".__("Attendance")."</th><th>".__("IP Address")."</th></tr>\n");
     foreach ( $rows as $row ) {
