@@ -36,7 +36,7 @@ class Attend {
             Settings::linkSet('code', $_POST['code']);
             $app->tsugiFlashSuccess('Code updated');
         } else if ( isset($_POST['clear']) && $app['tsugi']->user->instructor ) {
-            $rows = $PDOX->queryDie("DELETE FROM {$p}attend WHERE link_id = :LI",
+            $PDOX->queryDie("DELETE FROM {$p}attend WHERE link_id = :LI",
                     array(':LI' => $app['tsugi']->link->id)
             );
             $app->tsugiFlashSuccess('Data cleared');
