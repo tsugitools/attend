@@ -6,7 +6,6 @@ require_once "../config.php";
 
 use \Tsugi\Core\Settings;
 use \Tsugi\Core\LTIX;
-use \Tsugi\Util\Net;
 
 // No parameter means we require CONTEXT, USER, and LINK
 $LAUNCH = LTIX::requireData();
@@ -18,7 +17,6 @@ $OUTPUT->header();
 $OUTPUT->bodyStart();
 $OUTPUT->topNav();
 $OUTPUT->welcomeUserCourse();
-$OUTPUT->flashMessages();
 
 echo("<!-- tmpljs version of the tool -->\n");
 echo('<div id="application">'."\n");
