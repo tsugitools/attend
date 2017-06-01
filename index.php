@@ -9,7 +9,7 @@ use \Tsugi\Core\LTIX;
 use \Tsugi\Util\Net;
 
 // No parameter means we require CONTEXT, USER, and LINK
-$LAUNCH = LTIX::requireData(); 
+$LAUNCH = LTIX::requireData();
 
 // Model
 $p = $CFG->dbprefix;
@@ -21,7 +21,7 @@ if ( isset($_POST['code']) && isset($_POST['set']) && $USER->instructor ) {
     header( 'Location: '.addSession('index.php') ) ;
     return;
 } else if ( isset($_POST['clear']) && $USER->instructor ) {
-    $rows = $PDOX->queryDie("DELETE FROM {$p}attend WHERE link_id = :LI",
+    $PDOX->queryDie("DELETE FROM {$p}attend WHERE link_id = :LI",
             array(':LI' => $LINK->id)
     );
     $_SESSION['success'] = 'Data cleared';
@@ -82,4 +82,3 @@ $(document).ready(function(){
 <?php
 } // End $USER->instructor
 $OUTPUT->footerEnd();
-
