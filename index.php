@@ -4,8 +4,8 @@ require_once "../config.php";
 // The Tsugi PHP API Documentation is available at:
 // http://do1.dr-chuck.com/tsugi/phpdoc/
 
-use \Tsugi\Core\Settings;
 use \Tsugi\Core\LTIX;
+use \Tsugi\Core\Settings;
 use \Tsugi\Util\Net;
 
 // No parameter means we require CONTEXT, USER, and LINK
@@ -21,7 +21,7 @@ if ( isset($_POST['code']) && isset($_POST['set']) && $USER->instructor ) {
     header( 'Location: '.addSession('index.php') ) ;
     return;
 } else if ( isset($_POST['clear']) && $USER->instructor ) {
-    $rows = $PDOX->queryDie("DELETE FROM {$p}attend WHERE link_id = :LI",
+    $PDOX->queryDie("DELETE FROM {$p}attend WHERE link_id = :LI",
             array(':LI' => $LINK->id)
     );
     $_SESSION['success'] = 'Data cleared';
