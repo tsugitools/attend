@@ -2,7 +2,7 @@
 require_once "../config.php";
 
 // The Tsugi PHP API Documentation is available at:
-// http://do1.dr-chuck.com/tsugi/phpdoc/namespaces/Tsugi.html
+// http://do1.dr-chuck.com/tsugi/phpdoc/
 
 use \Tsugi\Core\Settings;
 use \Tsugi\Core\LTIX;
