@@ -10,7 +10,7 @@ $REGISTER_LTI2 = array(
     "languages" => array(
         "English", "Spanish"
     ),
-    "source_url" => "https://github.com/tsugitools/lti_tool",
+    "source_url" => "https://github.com/tsugitools/attend",
     "placements" => array(
         "course_navigation", "editor_button"
         /*
