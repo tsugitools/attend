@@ -5,6 +5,8 @@ $REGISTER_LTI2 = array(
 "FontAwesome" => "fa-server",
 "short_name" => "Attendance Tool",
 "description" => "This is a simple attendance tool that allows the instructor to set a code and the students enter the code.",
+    // By default, accept launch messages..
+    "messages" => array("launch"),
     "privacy_level" => "name_only",  // anonymous, name_only, public
     "license" => "Apache",
     "languages" => array(
