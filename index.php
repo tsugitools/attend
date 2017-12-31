@@ -1,6 +1,8 @@
 <?php
 require_once "../config.php";
 
+if ( \Tsugi\Core\Tool::handleConfig() ) return;
+
 use \Tsugi\Core\LTIX;
 
 $launch = LTIX::requireData();
