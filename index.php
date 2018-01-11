@@ -16,7 +16,7 @@ $p = $CFG->dbprefix;
 $old_code = $LAUNCH->link->getJsonKey('code', '');
 
 if ( isset($_POST['code']) && isset($_POST['set']) && $USER->instructor ) {
-    Settings::linkSet('code', $_POST['code']);
+    $LAUNCH->link->setJsonKey('code', $_POST['code']);
     $_SESSION['success'] = 'Code updated';
     header( 'Location: '.addSession('index.php') ) ;
     return;
