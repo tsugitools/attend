@@ -2,47 +2,47 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Attend\n"
 "POT-Creation-Date: 2014-06-08 21:20-0500\n"
-"PO-Revision-Date: 2018-01-18 18:37-0500\n"
-"Last-Translator: Charles Severance <drchuck@gmail.com>\n"
+"PO-Revision-Date: 2018-01-02 22:13+0100\n"
 "Language-Team: Testing 123 <drchuck@gmail.com>\n"
-"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.6.5\n"
-"X-Poedit-Basepath: ../../../\n"
+"X-Generator: Poedit 2.0.5\n"
+"X-Poedit-Basepath: ../../..\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-KeywordsList: _;_e;__;_m\n"
+"Last-Translator: \n"
+"Language: de_DE@formal\n"
 "X-Poedit-SearchPath-0: .\n"
 
 #: index.php:48
 msgid "Attendance Recorded..."
-msgstr "Asistencia registrada ..."
+msgstr "Anwesenheit registriert..."
 
 #: index.php:50
 msgid "Code incorrect"
-msgstr "Un código incorrecto"
+msgstr "Code falsch"
 
 #: index.php:63
 msgid "Enter code:"
-msgstr "Introducir código:"
+msgstr "Code eingeben:"
 
 #: index.php:66
 msgid "Update code"
-msgstr "Código de actualización"
+msgstr "Code aktualisieren"
 
 #: index.php:69
 msgid "Record attendance"
-msgstr "Récord de asistencia"
+msgstr "Anwesenheit registrieren"
 
 #: index.php:78
 msgid "User"
-msgstr "Usuario"
+msgstr "Benutzer"
 
 #: index.php:78
 msgid "Attendance"
-msgstr "Asistencia"
+msgstr "Anwesenheit"
 
 #: index.php:78
 msgid "IP Address"
-msgstr "Dirección IP"
+msgstr "IP-Adresse"
