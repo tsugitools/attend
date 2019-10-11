@@ -49,7 +49,9 @@ if ( isset($_POST['code']) && isset($_POST['set']) && $USER->instructor ) {
 
 // Prepare for view
 if ( $USER->instructor ) {
-    $rows = $PDOX->allRowsDie("SELECT user_id,attend,ipaddr FROM {$p}attend
+    $rows = $PDOX->allRowsDie("SELECT A.user_id,attend,A.ipaddr, displayname, email
+            FROM {$p}attend AS A
+            JOIN {$p}lti_user AS U ON U.user_id = A.user_id
             WHERE link_id = :LI ORDER BY attend DESC, user_id",
             array(':LI' => $LINK->id)
     );
@@ -84,7 +86,21 @@ if ( $rows ) {
     echo("<tr><th>".__("User")."</th><th>".__("Attendance")."</th><th>".__("IP Address")."</th></tr>\n");
     foreach ( $rows as $row ) {
         echo "<tr><td>";
+        if ( strlen($row['displayname']) > 0 || strlen($row['email']) > 0 ) {
+            echo('<a href="#" onclick="alert(\'');
+            if ( strlen($row['email']) > 0 ) {
+                echo(htmlent_utf8($row['email']));
+                if ( strlen($row['displayname']) > 0 ) echo(' | ');
+            }
+            if ( strlen($row['displayname']) > 0 ) {
+                echo(htmlent_utf8($row['displayname']));
+            }
+            echo('\'); return false;">');
+        }
         echo($row['user_id']);
+        if ( strlen($row['displayname']) > 0 || strlen($row['email']) > 0 ) {
+            echo('</a>');
+        }
         echo("</td><td>");
         echo($row['attend']);
         echo("</td><td>");
