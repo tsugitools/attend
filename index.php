@@ -39,6 +39,11 @@ if ( isset($_POST['code']) && isset($_POST['set']) && $USER->instructor ) {
                 ':IP' => Net::getIP()
             )
         );
+    if ( isset($LAUNCH->link) && $LAUNCH->link ) {
+        if ($LAUNCH->result && $LAUNCH->result->id && $RESULT->grade < 1.0 ) {
+            $RESULT->gradeSend(1.0, false);
+        }
+      }
         $_SESSION['success'] = __('Attendance Recorded...');
     } else {
         $_SESSION['error'] = __('Code incorrect');
