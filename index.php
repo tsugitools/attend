@@ -5,22 +5,26 @@ require_once "../config.php";
 // http://do1.dr-chuck.com/tsugi/phpdoc/
 
 use \Tsugi\Core\LTIX;
-use \Tsugi\Core\Settings;
 use \Tsugi\Util\Net;
+use \Tsugi\Core\Settings;
+use \Tsugi\UI\SettingsForm;
 
 // No parameter means we require CONTEXT, USER, and LINK
 $LAUNCH = LTIX::requireData();
 
+// If settings were updated
+if ( SettingsForm::handleSettingsPost() ) {
+    header( 'Location: '.addSession('index.php') ) ;
+    return;
+}
+
 // Handle Post Data
 $p = $CFG->dbprefix;
 $old_code = $LAUNCH->link->getJsonKey('code', '');
+$old_code = $LAUNCH->link->settingsGet('code', $old_code);
+$send_grade = $LAUNCH->link->settingsGet('grade');
 
-if ( isset($_POST['code']) && isset($_POST['set']) && $USER->instructor ) {
-    $LAUNCH->link->setJsonKey('code', $_POST['code']);
-    $_SESSION['success'] = 'Code updated';
-    header( 'Location: '.addSession('index.php') ) ;
-    return;
-} else if ( isset($_POST['clear']) && $USER->instructor ) {
+if ( isset($_POST['clear']) && $USER->instructor ) {
     $PDOX->queryDie("DELETE FROM {$p}attend WHERE link_id = :LI",
             array(':LI' => $LINK->id)
     );
@@ -39,7 +43,7 @@ if ( isset($_POST['code']) && isset($_POST['set']) && $USER->instructor ) {
                 ':IP' => Net::getIP()
             )
         );
-    if ( isset($LAUNCH->link) && $LAUNCH->link ) {
+    if ( $send_grade && isset($LAUNCH->link) && $LAUNCH->link ) {
         if ($LAUNCH->result && $LAUNCH->result->id && $RESULT->grade < 1.0 ) {
             $RESULT->gradeSend(1.0, false);
         }
@@ -68,23 +72,45 @@ if ( $USER->instructor ) {
 $OUTPUT->header();
 $OUTPUT->bodyStart();
 $OUTPUT->topNav();
-$OUTPUT->welcomeUserCourse();
+
+if ( $USER->instructor ) {
+    echo('<div style="float:right;">');
+    echo('<form method="post" style="display: inline">');
+    echo('<input type="submit" class="btn btn-warning" name="clear" value="'.__('Clear data').'">');
+    echo("</form>\n");
+    SettingsForm::button(false);
+    echo('</div>');
+
+    $OUTPUT->welcomeUserCourse();
+    echo('<br clear="all">');
+    SettingsForm::start();
+    echo("<p>Configure the LTI Tool<p>\n");
+    SettingsForm::text('code',__('Code'));
+    SettingsForm::checkbox('grade',__('Send a grade'));
+    SettingsForm::done();
+    SettingsForm::end();
+}
+
 $OUTPUT->flashMessages();
 
 echo("<!-- Classic single-file version of the tool -->\n");
 
-// We could use the settings form - but we will keep this simple
-echo('<form method="post">');
-echo(__("Enter code:")."\n");
+// Ask the user for the code
 if ( $USER->instructor ) {
-    echo('<input type="text" name="code" value="'.htmlent_utf8($old_code).'"> ');
-    echo('<input type="submit" class="btn btn-normal" name="set" value="'.__('Update code').'"> ');
-    echo('<input type="submit" class="btn btn-warning" name="clear" value="'.__('Clear data').'"><br/>');
+    echo("<p>");
+    if ( strlen($old_code) < 1 ) {
+        echo(__("Use the setting link to configure the attendance code."));
+    } else {
+        echo(__("You can use the setting link to change the attendance code."));
+    }
+    echo("</p>\n");
 } else {
+    echo('<form method="post">');
+    echo(__("Enter code:")."\n");
     echo('<input type="text" name="code" value=""> ');
     echo('<input type="submit" class="btn btn-normal" name="set" value="'.__('Record attendance').'"><br/>');
+    echo("\n</form>\n");
 }
-echo("\n</form>\n");
 
 if ( $rows ) {
     echo('<table border="1">'."\n");
