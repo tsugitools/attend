@@ -23,6 +23,8 @@ $p = $CFG->dbprefix;
 $old_code = $LAUNCH->link->getJsonKey('code', '');
 $old_code = $LAUNCH->link->settingsGet('code', $old_code);
 $send_grade = $LAUNCH->link->settingsGet('grade');
+$match = $LAUNCH->link->settingsGet('match');
+$ip = Net::getIP();
 
 if ( isset($_POST['clear']) && $USER->instructor ) {
     $PDOX->queryDie("DELETE FROM {$p}attend WHERE link_id = :LI",
@@ -31,27 +33,50 @@ if ( isset($_POST['clear']) && $USER->instructor ) {
     $_SESSION['success'] = 'Data cleared';
     header( 'Location: '.addSession('index.php') ) ;
     return;
-} else if ( isset($_POST['code']) ) { // Student
-    if ( $old_code == $_POST['code'] ) {
-        $PDOX->queryDie("INSERT INTO {$p}attend
-            (link_id, user_id, ipaddr, attend, updated_at)
-            VALUES ( :LI, :UI, :IP, NOW(), NOW() )
-            ON DUPLICATE KEY UPDATE updated_at = NOW()",
-            array(
-                ':LI' => $LINK->id,
-                ':UI' => $USER->id,
-                ':IP' => Net::getIP()
-            )
-        );
+} 
+
+if ( isset($_POST['code']) ) { // Student
+    if ( $old_code != $_POST['code'] ) {
+        $_SESSION['error'] = __('Code incorrect');
+        header( 'Location: '.addSession('index.php') ) ;
+        return;
+    }
+
+    if ( strlen($match) > 0 && substr($match, 0, 1) == '/' ) {
+        if (!preg_match($match, $ip) ) {
+            $_SESSION['error'] = __('IP Address '.$ip.' does not match (regex).');
+            header( 'Location: '.addSession('index.php') ) ;
+            return;
+        }
+    }
+
+    if ( strlen($match) > 0 && substr($match, 0, 1) != '/' ) {
+        if ( strpos($match, $ip) === false ) {
+            $_SESSION['error'] = __('IP Address '.$ip.' does not match.');
+            header( 'Location: '.addSession('index.php') ) ;
+            return;
+        }
+    }
+
+    // Passed all the tests..
+    $PDOX->queryDie("INSERT INTO {$p}attend
+        (link_id, user_id, ipaddr, attend, updated_at)
+        VALUES ( :LI, :UI, :IP, NOW(), NOW() )
+        ON DUPLICATE KEY UPDATE updated_at = NOW()",
+        array(
+            ':LI' => $LINK->id,
+            ':UI' => $USER->id,
+            ':IP' => Net::getIP()
+        )
+    );
+
     if ( $send_grade && isset($LAUNCH->link) && $LAUNCH->link ) {
         if ($LAUNCH->result && $LAUNCH->result->id && $RESULT->grade < 1.0 ) {
             $RESULT->gradeSend(1.0, false);
         }
-      }
-        $_SESSION['success'] = __('Attendance Recorded...');
-    } else {
-        $_SESSION['error'] = __('Code incorrect');
     }
+
+    $_SESSION['success'] = __('Attendance Recorded...');
     header( 'Location: '.addSession('index.php') ) ;
     return;
 }
@@ -87,6 +112,8 @@ if ( $USER->instructor ) {
     echo("<p>Configure the LTI Tool<p>\n");
     SettingsForm::text('code',__('Code'));
     SettingsForm::checkbox('grade',__('Send a grade'));
+    SettingsForm::text('match',__('This can be a prefix of an IP address like "142.16.41" or if it starts with a "/" it can be a regular expression (PHP syntax)'));
+    echo("<p>Your current IP address is ".htmlentities(Net::getIP())."</p>\n");
     SettingsForm::done();
     SettingsForm::end();
 }
@@ -110,6 +137,14 @@ if ( $USER->instructor ) {
     echo('<input type="text" name="code" value=""> ');
     echo('<input type="submit" class="btn btn-normal" name="set" value="'.__('Record attendance').'"><br/>');
     echo("\n</form>\n");
+}
+
+// Check the regex
+if ( $USER->instructor && strlen($match) > 0 && substr($match, 0, 1) == '/' ) {
+   @preg_match($match, $ip);
+   if ( preg_last_error() != PREG_NO_ERROR ) {
+       echo('<p style="color:red;">Syntax error in regular expression '.htmlentities($match)."</p>\n");
+    }
 }
 
 if ( $rows ) {
