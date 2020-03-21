@@ -93,17 +93,22 @@ if ( $USER->instructor ) {
     $rows = false;
 }
 
+$menu = false;
+if ( $USER->instructor ) {
+    $menu = new \Tsugi\UI\MenuSet();
+    $menu->addRight(__('Settings'), '#', /* push */ false, SettingsForm::attr());
+}
+
 // Render view
 $OUTPUT->header();
 $OUTPUT->bodyStart();
-$OUTPUT->topNav();
+$OUTPUT->topNav($menu);
 
 if ( $USER->instructor ) {
     echo('<div style="float:right;">');
     echo('<form method="post" style="display: inline">');
     echo('<input type="submit" class="btn btn-warning" name="clear" value="'.__('Clear data').'">');
     echo("</form>\n");
-    SettingsForm::button(false);
     echo('</div>');
 
     $OUTPUT->welcomeUserCourse();
@@ -126,9 +131,9 @@ echo("<!-- Classic single-file version of the tool -->\n");
 if ( $USER->instructor ) {
     echo("<p>");
     if ( strlen($old_code) < 1 ) {
-        echo(__("Use the setting link to configure the attendance code."));
+        echo(__("Use the settings link to configure the attendance code."));
     } else {
-        echo(__("You can use the setting link to change the attendance code."));
+        echo(__("You can use the settings link to change the attendance code."));
     }
     echo("</p>\n");
 } else {
