@@ -117,7 +117,7 @@ if ( $USER->instructor ) {
     echo("<p>Configure the LTI Tool<p>\n");
     SettingsForm::text('code',__('Code'));
     SettingsForm::checkbox('grade',__('Send a grade'));
-    SettingsForm::text('match',__('This can be a prefix of an IP address like "142.16.41" or if it starts with a "/" it can be a regular expression (PHP syntax)'));
+    SettingsForm::text('match',__('Limit access by IP address.  This can be a prefix of an IP address like "142.16.41" or if it starts with a "/" it can be a regular expression (PHP syntax)'));
     echo("<p>Your current IP address is ".htmlentities(Net::getIP())."</p>\n");
     SettingsForm::done();
     SettingsForm::end();
