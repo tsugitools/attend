@@ -8,7 +8,6 @@ Sample Code - Multiple Styles
 This is a sample Tsugi application with several variations, each in its own permanent branch:
 
 * Simple single-file application (master branch)
-* Silex application
 * Single file application that uses a handlebars templated rendered in the browser
 * Single page application using tmpljs to render pages in the browser submit data by JSON
 
