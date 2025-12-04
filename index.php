@@ -161,11 +161,11 @@ if ( $rows ) {
         echo($row['user_id']);
         if ( strlen($row['email']) > 0 || strlen($row['displayname']) > 0 ) echo(' | ');
         if ( strlen($row['email']) > 0 ) {
-            echo(htmlent_utf8($row['email']));
+            echo(htmlentities($row['email']));
             if ( strlen($row['displayname']) > 0 ) echo(' | ');
         }
         if ( strlen($row['displayname']) > 0 ) {
-            echo(htmlent_utf8($row['displayname']));
+            echo(htmlentities($row['displayname']));
         }
         echo('\'); return false;">');
         echo(' &nbsp;*******&nbsp; ');
@@ -173,7 +173,7 @@ if ( $rows ) {
         echo("</td><td>");
         echo($row['attend']);
         echo("</td><td>");
-        echo(htmlent_utf8($row['ipaddr']));
+        echo(htmlentities($row['ipaddr']));
         echo("</td></tr>\n");
     }
     echo("</table>\n");
